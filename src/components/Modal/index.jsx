@@ -1,44 +1,43 @@
-import React, { Component } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import s from './index.module.css';
 import PropTypes from 'prop-types';
 
 const modalRoot = document.querySelector('#modal-root');
 
-class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handelKeyUp);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handelKeyUp);
-  }
-  handelKeyUp = e => {
+function Modal({ onClose, largeImageURL, tags }) {
+  useEffect(() => {
+    window.addEventListener('keydown', handelKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handelKeyUp);
+    };
+  });
+
+  const handelKeyUp = e => {
     if (e.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
-  handleBackdropClick = e => {
-    if (e.target === e.currentTarget) {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  render() {
-    const { largeImageURL, tags } = this.props;
-    return createPortal(
-      <div
-        id="CloseAnimateOverlay"
-        className={s.Overlay}
-        onClick={this.handleBackdropClick}
-      >
-        <div id="CloseAnimateModal" className={s.Modal}>
-          <img src={largeImageURL} alt={tags} />
-        </div>
-      </div>,
-      modalRoot
-    );
-  }
+  const handleBackdropClick = e => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+  return createPortal(
+    <div
+      id="CloseAnimateOverlay"
+      className={s.Overlay}
+      onClick={handleBackdropClick}
+    >
+      <div id="CloseAnimateModal" className={s.Modal}>
+        <img src={largeImageURL} alt={tags} />
+      </div>
+    </div>,
+    modalRoot
+  );
 }
+
 Modal.propTypes = {
   largeImageURL: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
