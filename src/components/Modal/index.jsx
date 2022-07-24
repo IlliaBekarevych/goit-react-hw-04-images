@@ -11,7 +11,7 @@ function Modal({ onClose, largeImageURL, tags }) {
     return () => {
       window.removeEventListener('keydown', handelKeyUp);
     };
-  });
+  },[onClose]);
 
   const handelKeyUp = e => {
     if (e.code === 'Escape') {
